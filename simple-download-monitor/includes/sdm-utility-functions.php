@@ -108,7 +108,11 @@ function sdm_ip_info($ip, $purpose = "location") {
         "SA" => "South America"
     );
 
-    $ipdat = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=" . $ip));
+    $res = wp_safe_remote_get("http://www.geoplugin.net/json.gp?ip=" . $ip);
+    if ( is_wp_error($res) ) {
+        return null;
+    }
+    $ipdat = @json_decode($res['body']);
 
     if (@strlen(trim($ipdat->geoplugin_countryCode)) === 2) {
         switch ($purpose) {
